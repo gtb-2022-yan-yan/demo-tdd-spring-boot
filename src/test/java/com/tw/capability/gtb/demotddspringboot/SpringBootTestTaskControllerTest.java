@@ -68,6 +68,6 @@ class SpringBootTestTaskControllerTest {
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(responseEntity.getHeaders().getContentType()).isEqualTo(MediaType.APPLICATION_JSON);
         final var fetchedTasks = responseEntity.getBody();
-        assertThat(taskJson.parseObject(fetchedTasks)).isEqualTo(tasks);
+        assertThat(taskJson.parseObject(fetchedTasks)).isEqualTo(tasks); // json format
     }
 }
