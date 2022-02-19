@@ -30,14 +30,18 @@ class SpringBootTestTaskControllerTest {
     @Autowired
     private TaskController taskController;
 
+    @Autowired
+    private TaskRepository taskRepository;
+
     @AfterEach
     void tearDown() {
-        taskController.deleteAll(); // 数据清理 - 每次测试数据之间不影响
+        taskRepository.deleteAll(); // 数据清理 - 每次测试数据之间不影响
     }
 
     @Test
     void should_return_empty_tasks() {
         // given
+
 
         // when
         final var responseBody = restTemplate.getForEntity("/tasks", List.class);
@@ -51,8 +55,11 @@ class SpringBootTestTaskControllerTest {
     @Test
     void should_return_multiple_tasks() throws IOException {
         // given
-        final var tasks = List.of(new Task("task 01", true), new Task("task 02", false));
-        taskController.save(tasks);
+        final var tasks = List.of(
+                new Task("task 01", true),
+                new Task("task 02", false));
+
+        taskRepository.saveAll(tasks); // for multiple tasks
 
         // when
         final var responseEntity = restTemplate.getForEntity("/tasks", String.class);
