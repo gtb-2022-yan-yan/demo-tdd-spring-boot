@@ -11,7 +11,7 @@ import org.springframework.test.annotation.Rollback;
 import static org.assertj.core.api.Assertions.assertThat;
 
 //框架及数据库
-@DataJpaTest // 内存数据库
+@DataJpaTest // 针对数据库的测试
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Rollback
 class TaskRepositoryTest {
