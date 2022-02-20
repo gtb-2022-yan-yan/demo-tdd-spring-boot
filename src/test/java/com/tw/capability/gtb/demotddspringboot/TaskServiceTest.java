@@ -88,4 +88,20 @@ class TaskServiceTest {
         verify(taskRepository).findAll(); // 方法是否被真正调用
     }
 
+    @Test
+    void should_return_created_task_when_create_task() {
+        // given
+        final var task = new Task("task 01", false);
+        final var savedTask = new Task(1L, "task 01", false);
+
+        when(taskRepository.save(task)).thenReturn(savedTask);
+
+        // when
+        final var createdTask = taskService.createTask(task);
+
+        // then
+        assertThat(createdTask).isEqualTo(savedTask);
+        verify(taskRepository).save(task);
+    }
+
 }

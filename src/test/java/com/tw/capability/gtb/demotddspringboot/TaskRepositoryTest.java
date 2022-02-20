@@ -1,5 +1,6 @@
 package com.tw.capability.gtb.demotddspringboot;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +11,7 @@ import org.springframework.test.annotation.Rollback;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-//框架及数据库
+//框架及数据库 - 集成测试 - 与数据库实际交互
 @DataJpaTest // 针对数据库的测试
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Rollback
@@ -21,10 +22,6 @@ class TaskRepositoryTest {
 
     @Autowired
     private TestEntityManager entityManager;
-
-    @BeforeEach
-    void setUp() {
-    }
 
     @Test
     void should_return_empty_list() {
@@ -48,11 +45,24 @@ class TaskRepositoryTest {
         final var foundTasks = taskRepository.findAll();
 
         // then
-        assertThat(foundTasks)
-                .hasSize(2)
-                .containsOnly(
-                        new Task(1L,"task 01", true),
-                        new Task(2L, "task 02", false)
-                );
+        assertThat(foundTasks).hasSize(2);
+        // 与数据库交互的集成测试中，多个测试运行先后顺序并不确定，获取到的id（自动增加）也无法保证顺序，所以只测试其余数据
+        assertThat(foundTasks.get(0).getName()).isEqualTo("task 01");
+        assertThat(foundTasks.get(0).isCompleted()).isTrue();
+        assertThat(foundTasks.get(1).getName()).isEqualTo("task 02");
+        assertThat(foundTasks.get(1).isCompleted()).isFalse();
+    }
+
+    @Test
+    void should_return_saved_task_when_save_task() {
+        // given
+        final var task = new Task("task 01", false);
+        entityManager.persist(task);
+
+        // when
+        final var savedTask = taskRepository.save(task);
+
+        // then
+        assertThat(savedTask).isEqualTo(new Task(1L, "task 01", false));
     }
 }
