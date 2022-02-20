@@ -7,8 +7,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/tasks")
@@ -16,20 +14,16 @@ import java.util.stream.Collectors;
 public class TaskController {
 
 
-    private final TaskRepository taskRepository;
+    private final TaskService taskService;
 
     @GetMapping
     public List<Task> fetchTasks(@RequestParam(required = false) Boolean completed) { // Boolean是对象，可以为空
-        final var tasks = taskRepository.findAll();
-        if (Objects.isNull(completed)) {
-            return tasks;
-        }
+        return taskService.findTasks(completed);
+    }
 
-        if (Boolean.TRUE.equals(completed)) {
-            return tasks.stream().filter(Task::isCompleted).collect(Collectors.toList());
-        } else {
-            return tasks.stream().filter(task -> !task.isCompleted()).collect(Collectors.toList());
-        }
+    public List<Task> findTasks(Boolean completed) {
+
+        return taskService.findTasks(completed);
     }
 
 }
