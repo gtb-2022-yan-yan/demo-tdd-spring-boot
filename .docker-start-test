@@ -1,1 +1,4 @@
 docker run -td --name demo-mysql-test -p 3307:3306 -e MYSQL_ROOT_PASSWORD=password -e MYSQL_DATABASE=test_db -v $PWD/data:/var/lib/mysql mysql:8.0.22
+
+
+
