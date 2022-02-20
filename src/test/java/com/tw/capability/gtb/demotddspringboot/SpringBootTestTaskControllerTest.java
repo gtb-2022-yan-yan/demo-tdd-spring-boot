@@ -92,4 +92,24 @@ class SpringBootTestTaskControllerTest {
         assertThat(fetchTasks.get(0).isCompleted()).isEqualTo(toBeDoneTask.isCompleted());
 
     }
+    @Test
+    void should_return_to_be_done_tasks_given_completed_is_true() throws IOException {
+        // given
+        final var toBeDoneTask = new Task("task 01", false);
+        taskRepository.save(toBeDoneTask);
+        final var completedTask = new Task("task 02", true);
+        taskRepository.save(completedTask);
+
+        // when
+        final var responseEntity = restTemplate.getForEntity("/tasks?completed=true", String.class);
+
+        // then
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(responseEntity.getHeaders().getContentType()).isEqualTo(MediaType.APPLICATION_JSON);
+        final var fetchTasks = taskJson.parseObject(responseEntity.getBody());
+        assertThat(fetchTasks).hasSize(1);
+        assertThat(fetchTasks.get(0).getName()).isEqualTo(completedTask.getName()); // 分开校验，原task不含id
+        assertThat(fetchTasks.get(0).isCompleted()).isEqualTo(completedTask.isCompleted());
+
+    }
 }
