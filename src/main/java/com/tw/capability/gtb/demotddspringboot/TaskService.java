@@ -27,4 +27,8 @@ public class TaskService {
             return tasks.stream().filter(task -> !task.isCompleted()).collect(Collectors.toList());
         }
     }
+
+    public Task createTask(Task task) {
+        return taskRepository.save(task);
+    }
 }
