@@ -48,9 +48,9 @@ class TaskRepositoryTest {
         assertThat(foundTasks).hasSize(2);
         // 与数据库交互的集成测试中，多个测试运行先后顺序并不确定，获取到的id（自动增加）也无法保证顺序，所以只测试其余数据
         assertThat(foundTasks.get(0).getName()).isEqualTo("task 01");
-        assertThat(foundTasks.get(0).isCompleted()).isTrue();
+        assertThat(foundTasks.get(0).getCompleted()).isTrue();
         assertThat(foundTasks.get(1).getName()).isEqualTo("task 02");
-        assertThat(foundTasks.get(1).isCompleted()).isFalse();
+        assertThat(foundTasks.get(1).getCompleted()).isFalse();
     }
 
     @Test

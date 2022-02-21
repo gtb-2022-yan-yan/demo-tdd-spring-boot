@@ -22,9 +22,9 @@ public class TaskService {
         }
 
         if (Boolean.TRUE.equals(completed)) {
-            return tasks.stream().filter(Task::isCompleted).collect(Collectors.toList());
+            return tasks.stream().filter(Task::getCompleted).collect(Collectors.toList());
         } else {
-            return tasks.stream().filter(task -> !task.isCompleted()).collect(Collectors.toList());
+            return tasks.stream().filter(task -> !task.getCompleted()).collect(Collectors.toList());
         }
     }
 

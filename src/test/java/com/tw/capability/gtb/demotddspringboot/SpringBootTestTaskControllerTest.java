@@ -26,9 +26,6 @@ class SpringBootTestTaskControllerTest {
     private JacksonTester<List<Task>> taskJson;
 
     @Autowired
-    private TaskController taskController;
-
-    @Autowired
     private TaskRepository taskRepository;
 
     @AfterEach
@@ -86,7 +83,7 @@ class SpringBootTestTaskControllerTest {
         final var fetchTasks = taskJson.parseObject(responseEntity.getBody());
         assertThat(fetchTasks).hasSize(1);
         assertThat(fetchTasks.get(0).getName()).isEqualTo(toBeDoneTask.getName()); // 分开校验，原task不含id
-        assertThat(fetchTasks.get(0).isCompleted()).isEqualTo(toBeDoneTask.isCompleted());
+        assertThat(fetchTasks.get(0).getCompleted()).isEqualTo(toBeDoneTask.getCompleted());
 
     }
     @Test
@@ -106,7 +103,7 @@ class SpringBootTestTaskControllerTest {
         final var fetchTasks = taskJson.parseObject(responseEntity.getBody());
         assertThat(fetchTasks).hasSize(1);
         assertThat(fetchTasks.get(0).getName()).isEqualTo(completedTask.getName()); // 分开校验，原task不含id
-        assertThat(fetchTasks.get(0).isCompleted()).isEqualTo(completedTask.isCompleted());
+        assertThat(fetchTasks.get(0).getCompleted()).isEqualTo(completedTask.getCompleted());
 
     }
 
@@ -125,8 +122,27 @@ class SpringBootTestTaskControllerTest {
         assertThat(createdTask).isNotNull();
         assertThat(createdTask.getId()).isPositive();
         assertThat(createdTask.getName()).isEqualTo(task.getName());
-        assertThat(createdTask.isCompleted()).isEqualTo(task.isCompleted());
+        assertThat(createdTask.getCompleted()).isEqualTo(task.getCompleted());
 
 
     }
+
+
+    @Test
+    void should_return_bad_request_given_completed_is_null_when_add_task() {
+        // given
+        final var task = new Task("task 01", null);
+
+        // when
+        final var responseEntity = restTemplate.postForEntity("/tasks", task, ErrorResult.class);
+
+        // then
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(responseEntity.getHeaders().getContentType()).isEqualTo(MediaType.APPLICATION_JSON);
+        assertThat(responseEntity.getBody()).isNotNull();
+        assertThat(responseEntity.getBody().getMessage()).containsSequence("completed: 不能为null"); // 中文设置的原因返回的信息为中文
+
+
+    }
+
 }
